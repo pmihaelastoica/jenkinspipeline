@@ -27,15 +27,26 @@ stages{
             parallel{
                 stage ('Deploy to Staging'){
                     steps {
-                        sh "scp -i /home/jenkins/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_dev}:/var/lib/tomcat7/webapps"
+                        build job: 'Deploy to Staging'
                     }
                 }
 
                 stage ("Deploy to Production"){
                     steps {
-                        sh "scp -i /home/jenkins/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
+                        timeout(time:5, unit:'DAYS'){
+                            input message: 'Approve PRODUCTION Deployment?'
                     }
+                        
+                        build job: 'DEPLOY TO PROD'
                 }
+                    post {
+                        success {
+                            echo 'Code deployed to Production.'
+                        }
+                        
+                        failure {
+                            echo 'Deployment failed'
+                        }
             }
         }
     }
