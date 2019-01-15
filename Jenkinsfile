@@ -1,16 +1,6 @@
 pipeline {
     agent any
-    
-    parameters { 
-         string(name: 'tomcat_dev', defaultValue: 'http://localhost:8090/', description: 'Staging Server')
-         string(name: 'tomcat_prod', defaultValue: 'http://localhost:8081/', description: 'Production Server')
-    } 
-
-    triggers {
-         pollSCM('* * * * *') // Polling Source Control
-     }
-
-stages{
+    stages{
         stage('Build'){
             steps {
                 bat 'mvn clean package'
